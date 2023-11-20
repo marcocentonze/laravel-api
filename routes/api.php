@@ -26,3 +26,11 @@ Route::get('projects', function () {
         'result' => $projects
     ]);
 });
+
+Route::get('projects/latest', function () {
+    $projects = Project::with('type', 'technologies')->OrderbyDesc('id')->take(3)->get();
+    return response()->json([
+        'status' => 'success',
+        'result' => $projects
+    ]);
+});
