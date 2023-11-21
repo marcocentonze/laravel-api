@@ -29,6 +29,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('projects');
+        Schema::table('projects', function (Blueprint $table) {
+            $table->dropUnique('projects_github_link_unique'); 
+        });
+        
     }
 };
