@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Models\Project;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\TypeController;
+use App\Http\Controllers\Api\TechnologyController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,39 +21,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// route tutti i progetti
-Route::get('projects', function () {
-    $projects = Project::with('type', 'technologies')->OrderbyDesc('id')->paginate(9);
-    return response()->json([
-        'status' => 'success',
-        'result' => $projects
-    ]);
-});
 
 
-// route ultimi 3 progetti
-Route::get('projects/latest', function () {
-    $projects = Project::with('type', 'technologies')->OrderbyDesc('id')->take(3)->get();
-    return response()->json([
-        'status' => 'success',
-        'result' => $projects
-    ]);
-});
-
-// route singolo progetto
-Route::get('projects/{project:slug}', function ($slug) {
-
-    $project = Project::with('type', 'technologies')->where('slug', $slug)->first();
-
-    if ($project) {
-        return response()->json([
-            'success' => true,
-            'result' => $project
-        ]);
-    } else {
-        return response()->json([
-            'success' => false,
-            'result' => 'Project not found'
-        ]);
-    }
-});
+Route::get('/projects', [ProjectController::class, 'projects']);
+Route::get('/projects/latest', [ProjectController::class, 'latest_projects']);
+Route::get('/projects/{project:slug}', [ProjectController::class, 'single_project']);
+Route::get('/technologies', [TechnologyController::class, 'technologies']);
+Route::get('/technologies/{technology:slug}/projects', [TechnologyController::class, 'technology_projects']);
+Route::get('/types', [TypeController::class, 'types']);
